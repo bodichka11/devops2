@@ -33,6 +33,9 @@ jobs:
       - name: Checkout the files
         uses: actions/checkout@v2
 
+      - name: List files in current directory
+        run: ls -la
+
       - name: Executing remote ssh commands using ssh key
         uses: appleboy/ssh-action@master
         with:
@@ -44,4 +47,5 @@ jobs:
             sudo apt-get install -y apache2
             sudo systemctl start apache2
             sudo systemctl enable apache2
-            sudo mv * /var/www/html
+            sudo mkdir -p /var/www/html # Створюємо директорію, якщо вона відсутня
+            sudo mv * /var/www/html || echo "No files to move" # Обробка випадку, коли файли відсутні

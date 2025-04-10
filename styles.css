@@ -1,0 +1,250 @@
+/* Глобальні стилі */
+:root {
+    --primary: #6C63FF;
+    --secondary: #4D44DB;
+    --accent: #FF6584;
+    --dark: #2D3748;
+    --light: #F7FAFC;
+    --gray: #E2E8F0;
+    --dark-gray: #718096;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background-color: #f5f7fa;
+    color: var(--dark);
+    line-height: 1.6;
+}
+
+.highlight {
+    color: var(--accent);
+}
+
+/* Контейнер резюме */
+.resume-container {
+    max-width: 900px;
+    margin: 2rem auto;
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+/* Шапка */
+.hero {
+    display: flex;
+    padding: 3rem;
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    color: white;
+}
+
+.hero-content {
+    flex: 2;
+}
+
+.hero-image {
+    flex: 1;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.profile-pic {
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    border: 5px solid white;
+    object-fit: cover;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.status-bubble {
+    position: absolute;
+    bottom: 20px;
+    background: var(--accent);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-weight: bold;
+    font-size: 0.9rem;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+h1 {
+    font-size: 3rem;
+    margin-bottom: 0.5rem;
+}
+
+h2 {
+    font-size: 2rem;
+    margin-bottom: 1.5rem;
+    color: var(--primary);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.tagline {
+    font-style: italic;
+    margin-top: 1rem;
+    font-size: 1.2rem;
+    opacity: 0.9;
+}
+
+/* Секції */
+section {
+    padding: 2rem 3rem;
+    border-bottom: 1px solid var(--gray);
+}
+
+/* Навички */
+.skill-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1.5rem;
+}
+
+.skill-card {
+    background: var(--light);
+    padding: 1.5rem;
+    border-radius: 10px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+}
+
+.skill-level {
+    margin-top: 0.5rem;
+}
+
+.level-bar {
+    height: 10px;
+    background: var(--primary);
+    border-radius: 5px;
+    margin-bottom: 0.3rem;
+}
+
+.level-bar span {
+    font-size: 0.8rem;
+    color: var(--dark-gray);
+}
+
+/* Досвід роботи */
+.timeline {
+    position: relative;
+    padding-left: 2rem;
+}
+
+.timeline::before {
+    content: '';
+    position: absolute;
+    left: 7px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: var(--gray);
+}
+
+.timeline-item {
+    position: relative;
+    margin-bottom: 2rem;
+}
+
+.timeline-date {
+    position: absolute;
+    left: -2rem;
+    top: 0;
+    background: var(--primary);
+    color: white;
+    padding: 0.3rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: bold;
+}
+
+.timeline-content {
+    background: var(--light);
+    padding: 1.5rem;
+    border-radius: 10px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+    margin-left: 2rem;
+}
+
+.company {
+    color: var(--secondary);
+    font-weight: normal;
+}
+
+ul {
+    list-style-position: inside;
+    margin-top: 0.5rem;
+}
+
+li {
+    margin-bottom: 0.3rem;
+}
+
+/* Хобі */
+.hobby-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.8rem;
+}
+
+.hobby-tag {
+    background: var(--light);
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    color: var(--dark-gray);
+    border: 1px solid var(--gray);
+}
+
+/* Контакти */
+.contact-info {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.contact-info p {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.footer-note {
+    margin-top: 2rem;
+    padding: 1rem;
+    background: var(--light);
+    border-radius: 10px;
+    font-style: italic;
+    text-align: center;
+}
+
+/* Анімації */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+section {
+    animation: fadeIn 0.5s ease-out forwards;
+}
+
+section:nth-child(2) { animation-delay: 0.1s; }
+section:nth-child(3) { animation-delay: 0.2s; }
+section:nth-child(4) { animation-delay: 0.3s; }
+section:nth-child(5) { animation-delay: 0.4s; }

@@ -32,10 +32,10 @@ jobs:
     steps:
       - name: Checkout the files
         uses: actions/checkout@v2
-
-      - name: List files in current directory
-        run: ls -la
-
+  
+      - name: Install rsync (on GitHub Runner)
+        run: sudo apt-get install -y rsync
+  
       - name: Deploy files via SSH
         uses: appleboy/ssh-action@master
         with:
@@ -43,14 +43,21 @@ jobs:
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
-            sudo apt-get -y update
-            sudo apt-get install -y apache2
-            sudo systemctl start apache2
-            sudo systemctl enable apache2
-            sudo mkdir -p /var/www/html
-            
+            # Додаємо хост до відомих (ignore host verification)
+            mkdir -p ~/.ssh
+            echo "StrictHostKeyChecking no" >> ~/.ssh/config
+  
+            # Встановлюємо rsync на сервер (якщо потрібно)
+            sudo apt-get install -y rsync
+  
+            # Очищаємо старий контент
             sudo rm -rf /var/www/html/*
-            
-            sudo rsync -avz --delete ./ user@${{ secrets.HOST_DNS }}:/var/www/html/
-
+  
+            # Копіюємо файли через rsync (з GitHub Runner на сервер)
+            rsync -avz --delete -e "ssh -i ${{ secrets.EC2_SSH_KEY }}" \
+              ./ ${{ secrets.USERNAME }}@${{ secrets.HOST_DNS }}:/var/www/html/
+  
+            # Альтернатива через scp (якщо rsync не працює)
+            # scp -r -i ${{ secrets.EC2_SSH_KEY }} ./* ${{ secrets.USERNAME }}@${{ secrets.HOST_DNS }}:/var/www/html/
+  
             sudo systemctl restart apache2

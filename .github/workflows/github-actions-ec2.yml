@@ -26,38 +26,31 @@ jobs:
           npm test
 
   deploy:
-    name: Deploy to Server
-    needs: build
+    name: Deploy to EC2 on master branch push
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout the files
         uses: actions/checkout@v2
-  
-      - name: Install rsync (on GitHub Runner)
-        run: sudo apt-get install -y rsync
-  
-      - name: Deploy files via SSH
+
+      - name: Deploy to Server 1
+        uses: easingthemes/ssh-deploy@main
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.EC2_SSH_KEY }}
+          REMOTE_HOST: ${{ secrets.HOST_DNS }}
+          REMOTE_USER: ${{ secrets.USERNAME }}
+          TARGET: ${{ secrets.TARGET_DIR }}
+
+      - name: Executing remote ssh commands using ssh key
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.HOST_DNS }}
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
-            # Додаємо хост до відомих (ignore host verification)
-            mkdir -p ~/.ssh
-            echo "StrictHostKeyChecking no" >> ~/.ssh/config
-  
-            # Встановлюємо rsync на сервер (якщо потрібно)
-            sudo apt-get install -y rsync
-  
-            # Очищаємо старий контент
-            sudo rm -rf /var/www/html/*
-  
-            # Копіюємо файли через rsync (з GitHub Runner на сервер)
-            rsync -avz --delete -e "ssh -i ${{ secrets.EC2_SSH_KEY }}" \
-              ./ ${{ secrets.USERNAME }}@${{ secrets.HOST_DNS }}:/var/www/html/
-  
-            # Альтернатива через scp (якщо rsync не працює)
-            # scp -r -i ${{ secrets.EC2_SSH_KEY }} ./* ${{ secrets.USERNAME }}@${{ secrets.HOST_DNS }}:/var/www/html/
-  
-            sudo systemctl restart apache2
+            sudo apt-get -y update
+            sudo apt-get install -y apache2
+            sudo systemctl start apache2
+            sudo systemctl enable apache2
+            cd home
+            sudo mv * /var/www/html

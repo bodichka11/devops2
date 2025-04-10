@@ -1,27 +1,42 @@
 name: Push-to-EC2
 
-# Trigger deployment only on push to main branch
 on:
   push:
-    branches:
-      - main
+    branches: [main]
 
 jobs:
   deploy:
-    name: Deploy to EC2 on master branch push
+    name: Deploy to Server
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout the files
         uses: actions/checkout@v2
 
-      - name: Deploy to Server 1
-        uses: easingthemes/ssh-deploy@main
-        env:
-          SSH_PRIVATE_KEY: ${{ secrets.EC2_SSH_KEY }}
-          REMOTE_HOST: ${{ secrets.HOST_DNS }}
-          REMOTE_USER: ${{ secrets.USERNAME }}
-          TARGET: ${{ secrets.DIR }}
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.9'
+
+      - name: Install dependencies
+        run: |
+          pip install requests
+
+      - name: Run HTML Validation
+        run: |
+          python check.py index.html
+
+      - name: Run CSS Validation
+        run: |
+          npm install -g stylelint stylelint-config-standard
+          stylelint styles.css
+
+      - name: Deploy to Server
+        uses: easingthemes/actions-deploy@main
+        with:
+          ssh_private_key: ${{ secrets.EC2_SSH_KEY }}
+          remote_host: ${{ secrets.HOST_DNS }}
+          remote_user: ${{ secrets.USERNAME }}
+          target_dir: ${{ secrets.GIT_DIR }}
 
       - name: Executing remote ssh commands using ssh key
         uses: appleboy/ssh-action@master
@@ -34,5 +49,4 @@ jobs:
             sudo apt-get install -y apache2
             sudo systemctl start apache2
             sudo systemctl enable apache2
-            cd home
             sudo mv * /var/www/html

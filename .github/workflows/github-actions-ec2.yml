@@ -48,4 +48,5 @@ jobs:
             sudo systemctl start apache2
             sudo systemctl enable apache2
             sudo mkdir -p /var/www/html # Створюємо директорію, якщо вона відсутня
-            sudo mv * /var/www/html || echo "No files to move" # Обробка випадку, коли файли відсутні
+            sudo mv * /var/www/html || echo "No files to move"
+            sudo systemctl restart apache2

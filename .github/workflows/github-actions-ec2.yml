@@ -1,42 +1,37 @@
-name: Push-to-EC2
+name: CI/CD Pipeline
 
 on:
   push:
     branches: [main]
 
 jobs:
-  deploy:
-    name: Deploy to Server
+  build:
+    name: Build and Test
     runs-on: ubuntu-latest
     steps:
       - name: Checkout the files
         uses: actions/checkout@v2
 
-      - name: Set up Python
-        uses: actions/setup-python@v2
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
         with:
-          python-version: '3.9'
+          node-version: '16'
 
       - name: Install dependencies
         run: |
-          pip install requests
+          npm install --save-dev jest
 
-      - name: Run HTML Validation
+      - name: Run Tests
         run: |
-          python check.py index.html
+          npm test
 
-      - name: Run CSS Validation
-        run: |
-          npm install -g stylelint stylelint-config-standard
-          stylelint styles.css
-
-      - name: Deploy to Server
-        uses: easingthemes/actions-deploy@main
-        with:
-          ssh_private_key: ${{ secrets.EC2_SSH_KEY }}
-          remote_host: ${{ secrets.HOST_DNS }}
-          remote_user: ${{ secrets.USERNAME }}
-          target_dir: ${{ secrets.GIT_DIR }}
+  deploy:
+    name: Deploy to Server
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the files
+        uses: actions/checkout@v2
 
       - name: Executing remote ssh commands using ssh key
         uses: appleboy/ssh-action@master

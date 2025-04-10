@@ -36,7 +36,7 @@ jobs:
       - name: List files in current directory
         run: ls -la
 
-      - name: Executing remote ssh commands using ssh key
+      - name: Deploy files via SSH
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.HOST_DNS }}
@@ -47,6 +47,10 @@ jobs:
             sudo apt-get install -y apache2
             sudo systemctl start apache2
             sudo systemctl enable apache2
-            sudo mkdir -p /var/www/html # Створюємо директорію, якщо вона відсутня
-            sudo mv * /var/www/html || echo "No files to move"
+            sudo mkdir -p /var/www/html
+            
+            sudo rm -rf /var/www/html/*
+            
+            sudo rsync -avz --delete ./ user@${{ secrets.HOST_DNS }}:/var/www/html/
+
             sudo systemctl restart apache2
